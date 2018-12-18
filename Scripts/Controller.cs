@@ -24,7 +24,7 @@ public class Controller : MonoBehaviour {
         rb = GetComponent<Rigidbody2D>();
         vectorPlanetPos = planetToOrbit.transform.position;
         InvokeRepeating("TimeToIncrement", 0.1f, 0.01f);
-        jobSetRigidBodyToGameObject();
+       // jobSetRigidBodyToGameObject();
 
     }
 
@@ -59,18 +59,30 @@ public class Controller : MonoBehaviour {
 
     }
 
-    void jobSetRigidBodyToGameObject()
+    void jobSetRigidBodyToGameObject(GameObject planetToOrbit)
     {
-        try
-        {
-            HingeJoint2D hingeJoint;
-            hingeJoint = planetToOrbit.AddComponent<HingeJoint2D>();
-            hingeJoint.connectedBody = rb;
-            planetRb = planetToOrbit.AddComponent<Rigidbody2D>();
-            planetRb.gravityScale = 0;
+        Rigidbody2D planetRb;
+        planetRb = planetToOrbit.AddComponent<Rigidbody2D>();
+        planetRb.gravityScale = 0;
+       //Add HingeJoint to specific gameObject;
+        HingeJoint2D hingeJoint;
+        hingeJoint = planetToOrbit.AddComponent<HingeJoint2D>();
+        hingeJoint.connectedBody = rb;
+    }
 
-        }
-        catch { }
+    void jobDisableRigidBodyOnExit(GameObject planetToOrbit)
+    {
+        Destroy(planetToOrbit.GetComponent<HingeJoint2D>());
+        Destroy(planetToOrbit.GetComponent<Rigidbody2D>());
+    }
+
+    void OnTriggerEnter2D(Collider2D col)
+    {
+        jobSetRigidBodyToGameObject(col.gameObject);
+    }
+    void OnTriggerExit2D(Collider2D col)
+    {
+        jobDisableRigidBodyOnExit(col.gameObject);
     }
 
     //Vector3 torqueForce = new Vector3(0, 0, torqueMag);
