@@ -9,14 +9,15 @@ public class Controller : MonoBehaviour {
     private const float TIMETOACCELERATE = Mathf.Infinity;
     private float dt = 0.1f;
     private float lastTimeWhenWasAccelerating = 0.0f;
-    public float vinit = 1400f;
+    private float radiusOfPlanet = 0.1f;
+    public float vinit = 1400f; 
     public float time = 0.0f;
     public float omega = 0.0f;
     public float alpha = 166f;
     public float TangentAcceleration = 0.1f;
     Vector3 vectorPlanetPos;
     Vector3 positionVector;
-    private bool isInTrigger = false;
+    public bool isInTrigger = false;
     private bool outsideAccelerationField = false;
   
     void Start()
@@ -35,7 +36,7 @@ public class Controller : MonoBehaviour {
     {
 
      
-     positionVector = planetToOrbit.transform.position - transform.position;
+        positionVector = planetToOrbit.transform.position - transform.position;
 
         Vector3 velocityThatIsPerpendicular = new Vector3(-positionVector.y, positionVector.x, 0);
         float mag = positionVector.magnitude;
@@ -48,14 +49,14 @@ public class Controller : MonoBehaviour {
 
     void TimeToIncrement()
     {
-        Debug.Log("velocity : "+ rb.angularVelocity);
+        Debug.Log("velocity : "+ rb.angularVelocity + " radius: " + radiusOfPlanet);
         if (isInTrigger)
         {
             //TODO custom acceleration for every planet, aplha is modified by position vector.
             while (time < TIMETOACCELERATE)/// this loop should execute only once.
             {
                 time += dt;
-                omega = (alpha * time) + vinit;
+                omega = (radiusOfPlanet * alpha * time) + vinit;
                 outsideAccelerationField = false;
                 return;
             }
@@ -103,6 +104,7 @@ public class Controller : MonoBehaviour {
     {
         planetToOrbit = planetToOrbitLocal;
         //Add Rigidbody2D to specific gameObject;
+        radiusOfPlanet = planetToOrbitLocal.GetComponent<CircleCollider2D>().radius;
         if (planetToOrbitLocal.GetComponent<Rigidbody2D>() == null)
         {
             Rigidbody2D planetRb;
