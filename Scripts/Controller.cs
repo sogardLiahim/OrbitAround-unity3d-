@@ -26,8 +26,6 @@ public class Controller : MonoBehaviour {
         vectorPlanetPos = planetToOrbit.transform.position;
         InvokeRepeating("TimeToIncrement", 0.1f, dt);
         omega = vinit;
-       // jobSetRigidBodyToGameObject();
-
     }
 
     // Update is called once per frame
@@ -41,7 +39,7 @@ public class Controller : MonoBehaviour {
         Vector3 velocityThatIsPerpendicular = new Vector3(-positionVector.y, positionVector.x, 0);
         float mag = positionVector.magnitude;
         float force = rb.inertia * omega;
-       
+
 
         //Rotate to custom pivot, seeking hinge joint or just his local axis in motion
         rb.angularVelocity = force;
@@ -52,7 +50,7 @@ public class Controller : MonoBehaviour {
         Debug.Log("velocity : "+ rb.angularVelocity + " radius: " + radiusOfPlanet);
         if (isInTrigger)
         {
-            //TODO custom acceleration for every planet, aplha is modified by position vector.
+
             while (time < TIMETOACCELERATE)/// this loop should execute only once.
             {
                 time += dt;
@@ -76,8 +74,6 @@ public class Controller : MonoBehaviour {
             omega -= Mathf.SmoothStep(0, omega, 0.4f);
         
         }
-        TangentAcceleration = 0f;
-
         if (omega < 10f)
         {
             rb.AddForce(new Vector2(0, (-10f + omega)) * rb.mass);
@@ -142,6 +138,12 @@ public class Controller : MonoBehaviour {
             jobSetRigidBodyToGameObject(col.gameObject);
 
         }
+        if (col.tag == "bound")
+        {
+            Debug.Log("GameOver from" + col.name);
+            Debug.Break();
+        }
+
 
     }
 
